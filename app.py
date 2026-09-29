@@ -90,11 +90,11 @@ if pagina == "🏠 Início":
     st.subheader("Visualizações computacionais para o ensino de Cálculo")
 
     st.write(
-        "Esta primeira versão reúne dois aplicativos interativos em Python: "
-        "Soma de Riemann e Interpretação Gráfica da Derivada."
+        "Esta versão reúne três aplicativos interativos em Python: "
+        "Soma de Riemann, Interpretação Gráfica da Derivada e Método de Newton."
     )
 
-    c1, c2 = st.columns(2)
+    c1, c2, c3 = st.columns(3)
     with c1:
         st.info(
             "### ▥ Soma de Riemann\n"
@@ -107,6 +107,12 @@ if pagina == "🏠 Início":
             "Observe a reta secante aproximar-se da reta tangente quando "
             "o incremento h tende a zero."
         )
+    with c3:
+        st.info(
+            "### 🔵 Método de Newton\n"
+            "Acompanhe geometricamente as retas tangentes sucessivas e "
+            "as aproximações de uma raiz de f(x)=0."
+        )
 
     st.markdown("### Ideia pedagógica")
     st.write(
@@ -116,7 +122,7 @@ if pagina == "🏠 Início":
 
     st.markdown("### Próximos módulos possíveis")
     st.write(
-        "Segunda derivada e concavidade, Teorema do Valor Médio, Newton, Bisseção, "
+        "Segunda derivada e concavidade, Teorema do Valor Médio, Bisseção, "
         "Secante, Ponto Fixo, integração numérica e números complexos."
     )
 
@@ -552,3 +558,4 @@ elif pagina == "🔵 Método de Newton":
 
     except Exception as e:
         st.error(f"Não foi possível executar o Método de Newton: {e}")
+
