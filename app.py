@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="Cálculo Interativo",
@@ -79,7 +80,7 @@ def adaptive_ylim(ax, *arrays):
 st.sidebar.title("📐 Cálculo Interativo")
 pagina = st.sidebar.radio(
     "Navegação",
-    ["🏠 Início", "▥ Soma de Riemann", "📈 Derivada gráfica", "🔵 Método de Newton"],
+    ["🏠 Início", "▥ Soma de Riemann", "📈 Derivada gráfica", "🔵 Método de Newton", "🔶 GeoGebra Book"],
 )
 st.sidebar.markdown("---")
 st.sidebar.caption("Aplicativos interativos para o ensino de Cálculo.")
@@ -94,7 +95,7 @@ if pagina == "🏠 Início":
         "Soma de Riemann, Interpretação Gráfica da Derivada e Método de Newton."
     )
 
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.info(
             "### ▥ Soma de Riemann\n"
@@ -112,6 +113,12 @@ if pagina == "🏠 Início":
             "### 🔵 Método de Newton\n"
             "Acompanhe geometricamente as retas tangentes sucessivas e "
             "as aproximações de uma raiz de f(x)=0."
+        )
+    with c4:
+        st.info(
+            "### 🔶 GeoGebra Book\n"
+            "Acesse a coleção de atividades interativas organizadas em capítulos "
+            "no GeoGebra."
         )
 
     st.markdown("### Ideia pedagógica")
@@ -310,6 +317,49 @@ elif pagina == "📈 Derivada gráfica":
     except Exception as e:
         st.error(f"Não foi possível processar a função: {e}")
 
+
+
+# ---------- GeoGebra Book ----------
+elif pagina == "🔶 GeoGebra Book":
+    st.title("🔶 GeoGebra Book")
+    st.write(
+        "Acesse o livro **Cálculo Interativo com GeoGebra**, com atividades "
+        "organizadas em capítulos de Cálculo, Métodos Numéricos, Números Complexos "
+        "e Geometria."
+    )
+
+    # Link público do Book. Se o seu endereço público for diferente,
+    # basta trocar somente a linha abaixo.
+    BOOK_URL = "https://www.geogebra.org/m/yw9snazg"
+
+    st.link_button(
+        "📘 Abrir o GeoGebra Book em uma nova aba",
+        BOOK_URL,
+        use_container_width=True
+    )
+
+    st.markdown("### Visualização dentro do site")
+
+    # Alguns recursos do GeoGebra podem bloquear incorporação dependendo
+    # das configurações do material. Se isso ocorrer, use o botão acima.
+    components.html(
+        f"""
+        <iframe
+            src="{BOOK_URL}"
+            width="100%"
+            height="850"
+            style="border:1px solid #ddd; border-radius:10px;"
+            allowfullscreen>
+        </iframe>
+        """,
+        height=880,
+        scrolling=True
+    )
+
+    st.caption(
+        "Se o livro não aparecer incorporado, clique no botão acima para abri-lo "
+        "diretamente no GeoGebra."
+    )
 
 # ---------- Método de Newton ----------
 elif pagina == "🔵 Método de Newton":
@@ -558,4 +608,3 @@ elif pagina == "🔵 Método de Newton":
 
     except Exception as e:
         st.error(f"Não foi possível executar o Método de Newton: {e}")
-
