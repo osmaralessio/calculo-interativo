@@ -1,4 +1,3 @@
-
 import re
 import time
 import numpy as np
@@ -76,14 +75,72 @@ def adaptive_ylim(ax, *arrays):
         margin = 0.15 * (hi - lo)
         ax.set_ylim(lo - margin, hi + margin)
 
+# ---------- GeoGebra ----------
+BOOK_URL = "https://www.geogebra.org/m/yw9snazg"
+
+# Materiais de Métodos Numéricos do GeoGebra Book.
+# Troque cada "COLOCAR_ID" pelo código do material
+# (ex.: em geogebra.org/m/yw9snazg#material/abcd1234 o ID é abcd1234).
+# Enquanto o ID não for preenchido, o botão abre o GeoGebra Book.
+METODOS_NUMERICOS = {
+    "Método de Newton": "COLOCAR_ID",
+    "Método da Bisseção": "COLOCAR_ID",
+    "Eliminação de Gauss 3x3": "COLOCAR_ID",
+    "Eliminação de Gauss 4x4": "COLOCAR_ID",
+}
+
+
+def id_valido(material_id):
+    return bool(material_id) and material_id != "COLOCAR_ID"
+
+
+def geogebra_material_embed(material_id, altura=650):
+    url = (
+        f"https://www.geogebra.org/material/iframe/id/{material_id}"
+        f"/width/1100/height/{altura}/border/888888/sfsb/true/smb/false"
+        "/stb/false/stbh/false/ai/false/asb/false/sri/true/rc/false"
+        "/ld/false/sdz/true/ctl/false"
+    )
+    components.iframe(url, height=altura + 20, scrolling=True)
+
+
 # ---------- Navegação ----------
+PAGINAS = [
+    "🏠 Início",
+    "▥ Soma de Riemann",
+    "📈 Derivada gráfica",
+    "🔵 Método de Newton",
+    "🧮 Métodos Numéricos",
+    "🔶 GeoGebra Book",
+]
+
+if "pagina" not in st.session_state:
+    st.session_state.pagina = PAGINAS[0]
+
+
+def ir_para(destino):
+    st.session_state.pagina = destino
+
+
 st.sidebar.title("📐 Cálculo Interativo")
-pagina = st.sidebar.radio(
-    "Navegação",
-    ["🏠 Início", "▥ Soma de Riemann", "📈 Derivada gráfica", "🔵 Método de Newton", "🔶 GeoGebra Book"],
-)
+pagina = st.sidebar.radio("Navegação", PAGINAS, key="pagina")
 st.sidebar.markdown("---")
 st.sidebar.caption("Aplicativos interativos para o ensino de Cálculo.")
+
+
+def card(coluna, titulo, descricao, destino):
+    with coluna:
+        with st.container(border=True):
+            st.markdown(f"### {titulo}")
+            st.write(descricao)
+            st.button(
+                "Abrir",
+                key=f"card_{destino}",
+                on_click=ir_para,
+                args=(destino,),
+                use_container_width=True,
+            )
+
 
 # ---------- Início ----------
 if pagina == "🏠 Início":
@@ -91,35 +148,34 @@ if pagina == "🏠 Início":
     st.subheader("Visualizações computacionais para o ensino de Cálculo")
 
     st.write(
-        "Esta versão reúne três aplicativos interativos em Python: "
-        "Soma de Riemann, Interpretação Gráfica da Derivada e Método de Newton."
+        "Esta versão reúne aplicativos interativos em Python e no GeoGebra: "
+        "Soma de Riemann, Interpretação Gráfica da Derivada, Método de Newton "
+        "e Métodos Numéricos."
     )
 
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.info(
-            "### ▥ Soma de Riemann\n"
-            "Explore retângulos pela esquerda, direita ou ponto médio e observe "
-            "a aproximação da integral definida."
-        )
-    with c2:
-        st.info(
-            "### 📈 Derivada gráfica\n"
-            "Observe a reta secante aproximar-se da reta tangente quando "
-            "o incremento h tende a zero."
-        )
-    with c3:
-        st.info(
-            "### 🔵 Método de Newton\n"
-            "Acompanhe geometricamente as retas tangentes sucessivas e "
-            "as aproximações de uma raiz de f(x)=0."
-        )
-    with c4:
-        st.info(
-            "### 🔶 GeoGebra Book\n"
-            "Acesse a coleção de atividades interativas organizadas em capítulos "
-            "no GeoGebra."
-        )
+    c1, c2, c3 = st.columns(3)
+    card(c1, "▥ Soma de Riemann",
+         "Explore retângulos pela esquerda, direita ou ponto médio e observe "
+         "a aproximação da integral definida.",
+         "▥ Soma de Riemann")
+    card(c2, "📈 Derivada gráfica",
+         "Observe a reta secante aproximar-se da reta tangente quando "
+         "o incremento h tende a zero.",
+         "📈 Derivada gráfica")
+    card(c3, "🔵 Método de Newton",
+         "Acompanhe geometricamente as retas tangentes sucessivas e "
+         "as aproximações de uma raiz de f(x)=0.",
+         "🔵 Método de Newton")
+
+    c4, c5, _ = st.columns(3)
+    card(c4, "🧮 Métodos Numéricos",
+         "Aplicativos GeoGebra do curso de Cálculo Numérico: Newton, Bisseção "
+         "e Eliminação de Gauss.",
+         "🧮 Métodos Numéricos")
+    card(c5, "🔶 GeoGebra Book",
+         "Acesse a coleção de atividades interativas organizadas em capítulos "
+         "no GeoGebra.",
+         "🔶 GeoGebra Book")
 
     st.markdown("### Ideia pedagógica")
     st.write(
@@ -129,7 +185,7 @@ if pagina == "🏠 Início":
 
     st.markdown("### Próximos módulos possíveis")
     st.write(
-        "Segunda derivada e concavidade, Teorema do Valor Médio, Bisseção, "
+        "Segunda derivada e concavidade, Teorema do Valor Médio, "
         "Secante, Ponto Fixo, integração numérica e números complexos."
     )
 
@@ -328,9 +384,7 @@ elif pagina == "🔶 GeoGebra Book":
         "e Geometria."
     )
 
-    # Link público do Book. Se o seu endereço público for diferente,
-    # basta trocar somente a linha abaixo.
-    BOOK_URL = "https://www.geogebra.org/m/yw9snazg"
+    # O endereço do Book está definido em BOOK_URL, no início do arquivo.
 
     st.link_button(
         "📘 Abrir o GeoGebra Book em uma nova aba",
@@ -360,6 +414,40 @@ elif pagina == "🔶 GeoGebra Book":
         "Se o livro não aparecer incorporado, clique no botão acima para abri-lo "
         "diretamente no GeoGebra."
     )
+
+# ---------- Métodos Numéricos (GeoGebra) ----------
+elif pagina == "🧮 Métodos Numéricos":
+    st.title("🧮 Métodos Numéricos")
+    st.write(
+        "Aplicativos GeoGebra do curso de **Cálculo Numérico**. "
+        "Escolha um método para visualizá-lo aqui ou abri-lo em nova aba."
+    )
+
+    metodo = st.selectbox("Escolha o método:", list(METODOS_NUMERICOS))
+    material_id = METODOS_NUMERICOS[metodo]
+
+    if id_valido(material_id):
+        st.link_button(
+            f"🔗 Abrir {metodo} em nova aba",
+            f"https://www.geogebra.org/m/{material_id}",
+            use_container_width=True,
+        )
+        geogebra_material_embed(material_id)
+    else:
+        st.warning(
+            "O ID deste material ainda não foi cadastrado no app.py. "
+            "Por enquanto, acesse-o pelo GeoGebra Book."
+        )
+        st.link_button(
+            "📘 Abrir o GeoGebra Book",
+            BOOK_URL,
+            use_container_width=True,
+        )
+
+    st.markdown("### Todos os métodos")
+    for nome, mid in METODOS_NUMERICOS.items():
+        link = f"https://www.geogebra.org/m/{mid}" if id_valido(mid) else BOOK_URL
+        st.markdown(f"- [{nome}]({link})")
 
 # ---------- Método de Newton ----------
 elif pagina == "🔵 Método de Newton":
